@@ -440,8 +440,9 @@ document.addEventListener('DOMContentLoaded', function () {
   if (whatsappBtn) {
     whatsappBtn.addEventListener('click', function (e) {
       e.preventDefault();
+      var number = (window.siteConfig && window.siteConfig.whatsappNumber) ? window.siteConfig.whatsappNumber : '';
       window.open(
-        'https://wa.me/49XXXXXXXXXX?text=Guten%20Tag%2C%20ich%20ben%C3%B6tige%20Hilfe%20bei%20einem%20Betrugsfall.',
+        'https://wa.me/' + number + '?text=Guten%20Tag%2C%20ich%20ben%C3%B6tige%20Hilfe%20bei%20einem%20Betrugsfall.',
         '_blank'
       );
     });

@@ -17,10 +17,11 @@ ini_set('error_log', __DIR__ . '/logs/error.log');
 // ---------------------------------------------------------------------------
 // Site Settings
 // ---------------------------------------------------------------------------
-define('SITE_NAME',    'Finanzforensik');
-define('SITE_EMAIL',   'admin@finanzforensik.de');
-define('SITE_PHONE',   '+49 800 000 0000');
-define('SITE_ADDRESS', 'Musterstraße 1, 10115 Berlin, Deutschland');
+define('SITE_NAME',         'Finanzforensik');
+define('SITE_EMAIL',        'admin@finanzforensik.de');
+define('SITE_PHONE',        '+49 800 000 0000');
+define('SITE_ADDRESS',      'Musterstraße 1, 10115 Berlin, Deutschland');
+define('WHATSAPP_NUMBER',   getenv('WHATSAPP_NUMBER') !== false ? getenv('WHATSAPP_NUMBER') : '4989123456789');
 
 // ---------------------------------------------------------------------------
 // Security Constants
@@ -67,6 +68,7 @@ function get_db_connection(): PDO
     $host    = getenv('DB_HOST') !== false ? getenv('DB_HOST') : 'localhost';
     $dbname  = getenv('DB_NAME') !== false ? getenv('DB_NAME') : 'financial_expert';
     $user    = getenv('DB_USER') !== false ? getenv('DB_USER') : 'root';
+    // DB_PASS must be set via environment variable in production
     $pass    = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
     $charset = 'utf8mb4';
 

@@ -271,7 +271,7 @@ if ($isLocked && empty($lockoutMessage)) {
     </div>
 
     <div class="back-link">
-        <a href="../index.html"><i class="fas fa-arrow-left me-1"></i>Zurück zur Website</a>
+        <a href="../index.php"><i class="fas fa-arrow-left me-1"></i>Zurück zur Website</a>
     </div>
 </div>
 

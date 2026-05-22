@@ -65,7 +65,7 @@ try {
     }
 
 } catch (PDOException $e) {
-    error_log('Rate limit check failed: ' . $e->getCode());
+    error_log('Rate limit check failed: ' . $e->getMessage());
     // Non-fatal – continue processing
 }
 
@@ -104,7 +104,7 @@ if ($action === 'callback') {
 
         echo json_encode(['success' => true, 'message' => 'Vielen Dank! Wir rufen Sie zurück.']);
     } catch (PDOException $e) {
-        error_log('Callback insert failed: ' . $e->getCode());
+        error_log('Callback insert failed: ' . $e->getMessage());
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.']);
     }
@@ -196,7 +196,7 @@ try {
     ]);
 
 } catch (PDOException $e) {
-    error_log('Lead insert failed: ' . $e->getCode());
+    error_log('Lead insert failed: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns telefonisch.']);
 }

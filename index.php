@@ -810,7 +810,7 @@ $site_email = SITE_EMAIL;
                             <div class="contact-item-icon"><i class="fab fa-whatsapp"></i></div>
                             <div>
                                 <div class="contact-item-label">WhatsApp</div>
-                                <a href="https://wa.me/4989123456789" class="contact-item-value">Jetzt schreiben</a>
+                                <a href="https://wa.me/<?php echo htmlspecialchars(WHATSAPP_NUMBER); ?>" class="contact-item-value">Jetzt schreiben</a>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -1106,7 +1106,7 @@ $site_email = SITE_EMAIL;
 <!-- ============================================================
      FLOATING BUTTONS
 ============================================================ -->
-<a href="https://wa.me/4989123456789" class="floating-btn whatsapp-btn" target="_blank" rel="noopener" title="WhatsApp">
+<a href="https://wa.me/<?php echo htmlspecialchars(WHATSAPP_NUMBER); ?>" class="floating-btn whatsapp-btn" target="_blank" rel="noopener" title="WhatsApp">
     <i class="fab fa-whatsapp"></i>
 </a>
 <button class="floating-btn scroll-top-btn" id="scrollTopBtn" title="Nach oben">
@@ -1117,6 +1117,12 @@ $site_email = SITE_EMAIL;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Particles.js -->
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<!-- Site configuration for JS -->
+<script>
+window.siteConfig = {
+    whatsappNumber: '<?php echo htmlspecialchars(WHATSAPP_NUMBER, ENT_QUOTES); ?>'
+};
+</script>
 <!-- Custom JS -->
 <script src="js/ajax.js"></script>
 </body>

@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `admins` (
     UNIQUE KEY `uq_admins_email`    (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Default super-admin  (password: Admin@2024!)
+-- Default super-admin  (change this password immediately after first deployment)
 INSERT INTO `admins` (`username`, `password_hash`, `email`, `name`, `rolle`) VALUES (
     'admin',
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
