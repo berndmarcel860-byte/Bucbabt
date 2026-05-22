@@ -613,3 +613,227 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 });
+
+/* ============================================================
+   SUPPLEMENTAL – Index.php specific handlers
+   ============================================================ */
+(function () {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // -------------------------------------------------------
+    // Counter elements with .counter class + data-target
+    // -------------------------------------------------------
+    var counterEls = document.querySelectorAll('.counter[data-target]');
+    if (counterEls.length) {
+      var cObs = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var el = entry.target;
+          var target = parseInt(el.getAttribute('data-target'), 10);
+          var duration = 2000;
+          var start = 0;
+          var startTime = null;
+          function ease(t) { return 1 - Math.pow(1 - t, 4); }
+          function step(ts) {
+            if (!startTime) startTime = ts;
+            var prog = Math.min((ts - startTime) / duration, 1);
+            el.textContent = Math.floor(ease(prog) * target).toLocaleString('de-DE');
+            if (prog < 1) { requestAnimationFrame(step); }
+            else { el.textContent = target.toLocaleString('de-DE'); }
+          }
+          requestAnimationFrame(step);
+          obs.unobserve(el);
+        });
+      }, { threshold: 0.3 });
+      counterEls.forEach(function (el) { cObs.observe(el); });
+    }
+
+    // -------------------------------------------------------
+    // Multi-step form – contactForm with .next-step / .prev-step
+    // -------------------------------------------------------
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+
+    var steps = form.querySelectorAll('.form-step');
+    var progressSteps = form.querySelectorAll('.progress-step');
+    var currentStep = 0;
+
+    function showFormStep(idx) {
+      steps.forEach(function (s, i) {
+        s.classList.toggle('active', i === idx);
+      });
+      progressSteps.forEach(function (p, i) {
+        p.classList.remove('active', 'completed');
+        if (i < idx)  p.classList.add('completed');
+        if (i === idx) p.classList.add('active');
+      });
+    }
+
+    function validateCurrentStep() {
+      var active = steps[currentStep];
+      if (!active) return true;
+      var inputs = active.querySelectorAll('[required]');
+      var ok = true;
+      inputs.forEach(function (inp) {
+        inp.classList.remove('is-invalid');
+        var val = inp.value.trim();
+        if (inp.type === 'checkbox') {
+          if (!inp.checked) { inp.classList.add('is-invalid'); ok = false; }
+        } else if (!val) {
+          inp.classList.add('is-invalid'); ok = false;
+        } else if (inp.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+          inp.classList.add('is-invalid'); ok = false;
+        }
+      });
+      return ok;
+    }
+
+    // Next buttons
+    form.querySelectorAll('.next-step').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!validateCurrentStep()) return;
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          showFormStep(currentStep);
+        }
+      });
+    });
+
+    // Prev buttons
+    form.querySelectorAll('.prev-step').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (currentStep > 0) {
+          currentStep--;
+          showFormStep(currentStep);
+        }
+      });
+    });
+
+    // Submit
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!validateCurrentStep()) return;
+
+      var btn = document.getElementById('submitBtn');
+      var spinner = document.getElementById('submitSpinner');
+      var successEl = document.getElementById('formSuccess');
+      var errorEl = document.getElementById('formError');
+      var errorText = document.getElementById('formErrorText');
+
+      if (btn) btn.disabled = true;
+      if (spinner) spinner.classList.remove('d-none');
+      if (successEl) successEl.classList.add('d-none');
+      if (errorEl)   errorEl.classList.add('d-none');
+
+      var fd = new FormData(form);
+      // CSRF from meta tag
+      var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+      if (csrfMeta) fd.set('csrf_token', csrfMeta.getAttribute('content'));
+      fd.append('action', 'contact');
+
+      try {
+        var resp = await fetch('submit.php', { method: 'POST', body: fd });
+        var data = await resp.json();
+        if (data && data.success) {
+          form.querySelectorAll('.form-step').forEach(function (s) { s.classList.remove('active'); });
+          if (successEl) successEl.classList.remove('d-none');
+          form.reset();
+          currentStep = 0;
+          showFormStep(0);
+          // scroll into view
+          successEl && successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          if (errorText) errorText.textContent = (data && data.message) ? data.message : 'Fehler beim Senden. Bitte erneut versuchen.';
+          if (errorEl) errorEl.classList.remove('d-none');
+        }
+      } catch (err) {
+        if (errorText) errorText.textContent = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
+        if (errorEl) errorEl.classList.remove('d-none');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.classList.add('d-none');
+      }
+    });
+
+    // Initialise first step
+    showFormStep(0);
+
+    // -------------------------------------------------------
+    // Callback form – cb_name / cb_telefon field names
+    // -------------------------------------------------------
+    var cbForm = document.getElementById('callbackForm');
+    if (cbForm) {
+      cbForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var nameF  = cbForm.querySelector('[name="cb_name"]');
+        var phoneF = cbForm.querySelector('[name="cb_telefon"]');
+        var ok = true;
+        [nameF, phoneF].forEach(function (f) {
+          if (f) { f.classList.remove('is-invalid'); if (!f.value.trim()) { f.classList.add('is-invalid'); ok = false; } }
+        });
+        if (!ok) return;
+
+        var fd2 = new FormData(cbForm);
+        var csrfMeta2 = document.querySelector('meta[name="csrf-token"]');
+        if (csrfMeta2) fd2.set('csrf_token', csrfMeta2.getAttribute('content'));
+        fd2.append('action', 'callback');
+
+        var cbBtn = cbForm.querySelector('button[type="submit"]');
+        if (cbBtn) cbBtn.disabled = true;
+        try {
+          var r = await fetch('submit.php', { method: 'POST', body: fd2 });
+          var d = await r.json();
+          if (d && d.success) { cbForm.reset(); }
+        } catch (ex) {} finally {
+          if (cbBtn) cbBtn.disabled = false;
+        }
+      });
+    }
+
+    // -------------------------------------------------------
+    // Scroll-to-top visible class
+    // -------------------------------------------------------
+    var scrollTopBtn = document.getElementById('scrollTopBtn');
+    if (scrollTopBtn) {
+      function updateScrollTop() {
+        scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+      }
+      window.addEventListener('scroll', updateScrollTop, { passive: true });
+      updateScrollTop();
+      scrollTopBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // -------------------------------------------------------
+    // Activity widget – activityText without activityTime/Dot
+    // -------------------------------------------------------
+    var actEl = document.getElementById('activityText');
+    if (actEl) {
+      var msgs = [
+        'Neue Analyse gestartet – gerade eben',
+        'Anfrage aus München eingegangen – vor 3 Min.',
+        'Blockchain-Prüfung abgeschlossen – vor 8 Min.',
+        'Termin bestätigt – vor 12 Min.',
+        'Wallet-Analyse gestartet – vor 15 Min.',
+        'Anfrage aus Berlin eingegangen – vor 18 Min.',
+      ];
+      var ai = 0;
+      var widget = document.getElementById('activityWidget');
+      function rotateActivity() {
+        if (widget) { widget.style.opacity = '0'; }
+        setTimeout(function () {
+          actEl.textContent = msgs[ai % msgs.length];
+          ai++;
+          if (widget) { widget.style.opacity = '1'; }
+        }, 400);
+      }
+      if (widget) { widget.style.transition = 'opacity 0.4s ease'; }
+      rotateActivity();
+      setInterval(rotateActivity, 4000);
+    }
+
+  });
+}());

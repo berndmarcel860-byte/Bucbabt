@@ -1,0 +1,15 @@
+# Logs directory (keep directory, exclude contents)
+logs/*.log
+
+# Environment-specific config
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp

@@ -73,8 +73,9 @@ try {
 // Callback action (minimal lead)
 // ----------------------------------------------------------------
 if ($action === 'callback') {
-    $name  = sanitize_input($_POST['name']  ?? '');
-    $phone = sanitize_input($_POST['phone'] ?? '');
+    // Accept both field naming conventions (name/phone and cb_name/cb_telefon)
+    $name  = sanitize_input($_POST['cb_name']    ?? $_POST['name']  ?? '');
+    $phone = sanitize_input($_POST['cb_telefon'] ?? $_POST['phone'] ?? '');
 
     if (empty($name) || empty($phone)) {
         http_response_code(422);

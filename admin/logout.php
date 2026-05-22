@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 require_once '../config.php';
 
-session_start();
-
+// config.php already started the session with secure params
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
