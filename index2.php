@@ -28,6 +28,11 @@ $csrf_token = generate_csrf_token();
         .form-control::placeholder { color: #aeb7c6; }
         .form-control:focus, .form-select:focus { background: #13263f; border-color: #c9a84c; box-shadow: 0 0 0 .2rem rgba(201,168,76,.2); color: #fff; }
         .quick-badge { display: inline-block; background: rgba(201,168,76,.15); color: #f2d88f; border: 1px solid rgba(201,168,76,.45); border-radius: 999px; padding: .25rem .8rem; font-size: .85rem; }
+        .info-strip { background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,.08); border-bottom: 1px solid rgba(255,255,255,.08); }
+        .metric-item { padding: 1rem 0; }
+        .metric-value { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .metric-label { color: #b9c3d3; font-size: .92rem; }
+        .process-card { padding: 1.2rem; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); height: 100%; }
         .jk-footer { padding: 2rem 0; border-top: 1px solid rgba(255,255,255,0.1); color: #b9c3d3; }
     </style>
 </head>
@@ -40,8 +45,9 @@ $csrf_token = generate_csrf_token();
                 <span class="quick-badge"><i class="fas fa-user-shield me-2"></i>Persönliche Beratung</span>
                 <h1 class="hero-title mt-3">Johannes Kiehl – Ihr persönlicher Berater für internationale Betrugsfälle</h1>
                 <p class="hero-sub mt-3">
-                    Ich unterstütze Sie bei der strukturierten Aufarbeitung komplexer Betrugsfälle im In- und Ausland:
-                    von der Beweissicherung über die Transaktionsanalyse bis zur professionellen Dokumentation für weitere Schritte.
+                    Als erfolgreicher Accounting-Berater für Betrugsplattformen unterstütze ich Sie bei der strukturierten
+                    Aufarbeitung komplexer Fälle im In- und Ausland: von der Beweissicherung über die Finanzflussanalyse
+                    bis zur professionellen Falldokumentation für Behörden, Anwälte und Compliance-Teams.
                 </p>
                 <div class="mt-4 d-flex flex-wrap gap-3">
                     <div><i class="fas fa-globe-europe me-2 text-warning"></i>Internationale Fallbegleitung</div>
@@ -149,6 +155,29 @@ $csrf_token = generate_csrf_token();
     </div>
 </section>
 
+<section class="info-strip">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 metric-item">
+                <div class="metric-value">10+</div>
+                <div class="metric-label">Jahre Finanz- & Accounting-Erfahrung</div>
+            </div>
+            <div class="col-md-3 metric-item">
+                <div class="metric-value">250+</div>
+                <div class="metric-label">Analysierte Betrugs- und Plattformfälle</div>
+            </div>
+            <div class="col-md-3 metric-item">
+                <div class="metric-value">40+</div>
+                <div class="metric-label">Länderbezug in internationalen Fällen</div>
+            </div>
+            <div class="col-md-3 metric-item">
+                <div class="metric-value">24h</div>
+                <div class="metric-label">Erstreaktion auf neue Anfragen</div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="py-5">
     <div class="container">
         <h2 class="section-title">Leistungen für internationale Privatfälle</h2>
@@ -157,14 +186,14 @@ $csrf_token = generate_csrf_token();
                 <div class="service-card">
                     <i class="fas fa-magnifying-glass-chart fa-lg mb-3"></i>
                     <h3 class="h5 text-white">Transaktions- und Wallet-Analyse</h3>
-                    <p class="mb-0">Nachvollziehbare Aufarbeitung von Zahlungsflüssen, Wallet-Bewegungen und relevanten Kontaktpunkten.</p>
+                    <p class="mb-0">Accounting-orientierte Aufarbeitung von Zahlungsflüssen, Wallet-Bewegungen und Gegenparteien für eine belastbare Fallstruktur.</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="service-card">
                     <i class="fas fa-folder-open fa-lg mb-3"></i>
                     <h3 class="h5 text-white">Strukturierte Falldokumentation</h3>
-                    <p class="mb-0">Professionelle Zusammenstellung Ihrer Unterlagen für Behörden, Kanzleien und Partnernetzwerke.</p>
+                    <p class="mb-0">Professionelle Zusammenstellung Ihrer Unterlagen inkl. Zahlungsbelege, Kommunikationshistorie und Zeitachsen.</p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -172,6 +201,42 @@ $csrf_token = generate_csrf_token();
                     <i class="fas fa-handshake-angle fa-lg mb-3"></i>
                     <h3 class="h5 text-white">Persönliche Begleitung</h3>
                     <p class="mb-0">Direkte Beratung durch Johannes Kiehl mit klaren nächsten Schritten und laufenden Status-Updates.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pb-5">
+    <div class="container">
+        <h2 class="section-title">Mein professionelles Vorgehen als Accounting-Berater</h2>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="process-card">
+                    <div class="text-warning fw-bold mb-2">01</div>
+                    <h3 class="h6 text-white">Erstprüfung & Risiko-Scoring</h3>
+                    <p class="mb-0">Schnelle Bewertung Ihrer Unterlagen, Identifikation zentraler Risiken und Prioritäten.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="process-card">
+                    <div class="text-warning fw-bold mb-2">02</div>
+                    <h3 class="h6 text-white">Forensische Finanzanalyse</h3>
+                    <p class="mb-0">Analyse von Kontobewegungen, Zahlungsrouten und Plattformmustern mit klarer Nachvollziehbarkeit.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="process-card">
+                    <div class="text-warning fw-bold mb-2">03</div>
+                    <h3 class="h6 text-white">Dokumentenpaket</h3>
+                    <p class="mb-0">Erstellung eines professionellen Fallpakets für weitere rechtliche oder behördliche Schritte.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="process-card">
+                    <div class="text-warning fw-bold mb-2">04</div>
+                    <h3 class="h6 text-white">Begleitete Umsetzung</h3>
+                    <p class="mb-0">Kontinuierliche Betreuung mit klaren Status-Updates und transparenten Handlungsempfehlungen.</p>
                 </div>
             </div>
         </div>
