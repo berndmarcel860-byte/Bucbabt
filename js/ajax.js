@@ -664,6 +664,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function showFormStep(idx) {
       steps.forEach(function (s, i) {
         s.classList.toggle('active', i === idx);
+        s.style.display = (i === idx) ? 'block' : 'none';
       });
       progressSteps.forEach(function (p, i) {
         p.classList.remove('active', 'completed');
