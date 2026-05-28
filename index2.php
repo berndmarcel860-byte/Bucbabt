@@ -3,10 +3,34 @@
 require_once 'config.php';
 
 $csrf_token = generate_csrf_token();
-
-$site_name  = SITE_NAME;
-$site_phone = SITE_PHONE;
+$site_name = SITE_NAME;
 $site_email = SITE_EMAIL;
+
+try {
+    $pdo = get_db_connection();
+    $customization = get_site_customization($pdo);
+} catch (PDOException $e) {
+    error_log('index2 customization read error: ' . $e->getCode());
+    $customization = [
+        'logo_url' => '',
+        'phone' => SITE_PHONE,
+        'accountant_name' => 'Johannes Kiehl',
+        'whatsapp_number' => WHATSAPP_NUMBER,
+        'navbar_background_color' => '#0a1628',
+        'hero_title' => "Johannes Kiehl –\nIhr persönlicher Experte für internationale Betrugsfälle",
+        'hero_subtitle' => 'Als erfolgreicher Accounting-Berater für Betrugsplattformen begleite ich Sie bei der vollständigen Aufarbeitung Ihres Falls: präzise Finanzflussanalyse, professionelle Dokumentation und persönliche Betreuung bis zur Einreichung bei Behörden und Anwälten.',
+        'footer_tagline' => 'Persönlicher Accounting-Berater für internationale Betrugsfälle – professionell, diskret und vertrauenswürdig.',
+    ];
+}
+
+$site_phone = (string)$customization['phone'];
+$whatsapp_number = (string)$customization['whatsapp_number'];
+$accountant_name = (string)$customization['accountant_name'];
+$logo_url = trim((string)$customization['logo_url']);
+$hero_title = (string)$customization['hero_title'];
+$hero_subtitle = (string)$customization['hero_subtitle'];
+$footer_tagline = (string)$customization['footer_tagline'];
+$navbar_bg_color = preg_match('/^#[a-fA-F0-9]{6}$/', (string)$customization['navbar_background_color']) ? strtolower((string)$customization['navbar_background_color']) : '#0a1628';
 ?>
 <!DOCTYPE html>
 <html lang="de" prefix="og: https://ogp.me/ns#">
@@ -16,7 +40,7 @@ $site_email = SITE_EMAIL;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Johannes Kiehl | Accounting-Berater für internationale Betrugsfälle</title>
     <meta name="description" content="Johannes Kiehl – erfolgreicher Accounting-Berater für Betrugsplattformen. Professionelle Fallanalyse, Finanzdokumentation und persönliche Begleitung bei internationalem Investmentbetrug.">
-    <meta name="author" content="Johannes Kiehl">
+    <meta name="author" content="<?php echo htmlspecialchars($accountant_name, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>">
     <meta name="robots" content="index, follow">
 
     <!-- CSRF Token -->
@@ -38,11 +62,15 @@ $site_email = SITE_EMAIL;
 <!-- ============================================================
      NAVIGATION
 ============================================================ -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav" style="--navbar-custom-bg: <?php echo htmlspecialchars($navbar_bg_color, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>;">
     <div class="container">
         <a class="navbar-brand" href="#">
-            <i class="fas fa-user-tie me-2 text-gold"></i>
-            <span class="brand-name">Johannes Kiehl</span>
+            <?php if ($logo_url !== ''): ?>
+                <img src="<?php echo htmlspecialchars($logo_url, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>" alt="Logo" style="height:34px;width:auto;max-width:140px;object-fit:contain;" class="me-2">
+            <?php else: ?>
+                <i class="fas fa-user-tie me-2 text-gold"></i>
+            <?php endif; ?>
+            <span class="brand-name"><?php echo htmlspecialchars($accountant_name, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?></span>
             <span class="brand-sub">Berater</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -81,13 +109,10 @@ $site_email = SITE_EMAIL;
                     Zertifizierter Accounting-Berater &amp; Betrugsanalyst
                 </div>
                 <h1 class="hero-title animate-fadeInUp">
-                    Johannes Kiehl –<br>
-                    Ihr persönlicher Experte für <span class="text-gold">internationale Betrugsfälle</span>
+                    <?php echo nl2br(htmlspecialchars($hero_title, ENT_QUOTES | ENT_HTML5, 'UTF-8')); ?>
                 </h1>
                 <p class="hero-subtitle animate-fadeInUp delay-1">
-                    Als erfolgreicher Accounting-Berater für Betrugsplattformen begleite ich Sie bei der vollständigen
-                    Aufarbeitung Ihres Falls: präzise Finanzflussanalyse, professionelle Dokumentation und persönliche
-                    Betreuung bis zur Einreichung bei Behörden und Anwälten.
+                    <?php echo nl2br(htmlspecialchars($hero_subtitle, ENT_QUOTES | ENT_HTML5, 'UTF-8')); ?>
                 </p>
                 <div class="hero-buttons animate-fadeInUp delay-2">
                     <a href="#kontakt" class="btn btn-gold btn-lg me-3">
@@ -495,7 +520,7 @@ $site_email = SITE_EMAIL;
                             <div class="contact-item-icon"><i class="fab fa-whatsapp"></i></div>
                             <div>
                                 <div class="contact-item-label">WhatsApp</div>
-                                <a href="https://wa.me/<?php echo htmlspecialchars(WHATSAPP_NUMBER, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>" class="contact-item-value">Jetzt schreiben</a>
+                                <a href="https://wa.me/<?php echo htmlspecialchars($whatsapp_number, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>" class="contact-item-value">Jetzt schreiben</a>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -715,11 +740,15 @@ $site_email = SITE_EMAIL;
             <div class="row g-4">
                 <div class="col-lg-4">
                     <div class="footer-brand">
-                        <i class="fas fa-user-tie me-2 text-gold"></i>
-                        <span class="brand-name">Johannes Kiehl</span>
+                        <?php if ($logo_url !== ''): ?>
+                            <img src="<?php echo htmlspecialchars($logo_url, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>" alt="Logo" style="height:34px;width:auto;max-width:140px;object-fit:contain;" class="me-2">
+                        <?php else: ?>
+                            <i class="fas fa-user-tie me-2 text-gold"></i>
+                        <?php endif; ?>
+                        <span class="brand-name"><?php echo htmlspecialchars($accountant_name, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?></span>
                         <span class="brand-sub">Berater</span>
                     </div>
-                    <p class="footer-tagline">Persönlicher Accounting-Berater für internationale Betrugsfälle – professionell, diskret und vertrauenswürdig.</p>
+                    <p class="footer-tagline"><?php echo htmlspecialchars($footer_tagline, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?></p>
                     <div class="footer-badges mt-3">
                         <span class="footer-badge"><i class="fas fa-lock me-1"></i>SSL Secured</span>
                         <span class="footer-badge"><i class="fas fa-shield-check me-1"></i>DSGVO</span>
@@ -771,7 +800,7 @@ $site_email = SITE_EMAIL;
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <small>&copy; <?php echo date('Y'); ?> Johannes Kiehl. Alle Rechte vorbehalten.</small>
+                    <small>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($accountant_name, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>. Alle Rechte vorbehalten.</small>
                 </div>
                 <div class="col-md-6 text-md-end mt-2 mt-md-0">
                     <small class="footer-disclaimer">
@@ -787,7 +816,7 @@ $site_email = SITE_EMAIL;
 <!-- ============================================================
      FLOATING BUTTONS
 ============================================================ -->
-<a href="https://wa.me/<?php echo htmlspecialchars(WHATSAPP_NUMBER, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>" class="floating-btn whatsapp-btn" target="_blank" rel="noopener" title="WhatsApp">
+<a href="https://wa.me/<?php echo htmlspecialchars($whatsapp_number, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>" class="floating-btn whatsapp-btn" target="_blank" rel="noopener" title="WhatsApp">
     <i class="fab fa-whatsapp"></i>
 </a>
 <button class="floating-btn scroll-top-btn" id="scrollTopBtn" title="Nach oben">
@@ -801,7 +830,7 @@ $site_email = SITE_EMAIL;
 <!-- Site configuration for JS -->
 <script>
 window.siteConfig = {
-    whatsappNumber: '<?php echo htmlspecialchars(WHATSAPP_NUMBER, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>'
+    whatsappNumber: '<?php echo htmlspecialchars($whatsapp_number, ENT_QUOTES | ENT_HTML5, 'UTF-8'); ?>'
 };
 </script>
 <!-- Shared JS (same as index.php) -->

@@ -155,3 +155,81 @@ function sanitize_input(string $value): string
 {
     return htmlspecialchars(strip_tags(trim($value)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 }
+
+function ensure_site_customization_tables(PDO $pdo): void
+{
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS site_settings (
+            id TINYINT NOT NULL DEFAULT 1,
+            logo_url VARCHAR(500) DEFAULT NULL,
+            phone VARCHAR(50) NOT NULL,
+            accountant_name VARCHAR(255) NOT NULL,
+            whatsapp_number VARCHAR(30) NOT NULL,
+            navbar_background_color VARCHAR(20) NOT NULL DEFAULT '#0a1628',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            CHECK (id = 1)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    );
+
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS site_content (
+            id TINYINT NOT NULL DEFAULT 1,
+            hero_title TEXT NOT NULL,
+            hero_subtitle TEXT NOT NULL,
+            footer_tagline TEXT NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            CHECK (id = 1)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    );
+
+    $stmt = $pdo->prepare(
+        "INSERT INTO site_settings (id, logo_url, phone, accountant_name, whatsapp_number, navbar_background_color)
+         VALUES (1, NULL, :phone, :accountant_name, :whatsapp_number, :navbar_color)
+         ON DUPLICATE KEY UPDATE id = id"
+    );
+    $stmt->execute([
+        ':phone' => SITE_PHONE,
+        ':accountant_name' => 'Johannes Kiehl',
+        ':whatsapp_number' => WHATSAPP_NUMBER,
+        ':navbar_color' => '#0a1628',
+    ]);
+
+    $stmt = $pdo->prepare(
+        "INSERT INTO site_content (id, hero_title, hero_subtitle, footer_tagline)
+         VALUES (1, :hero_title, :hero_subtitle, :footer_tagline)
+         ON DUPLICATE KEY UPDATE id = id"
+    );
+    $stmt->execute([
+        ':hero_title' => "Johannes Kiehl –\nIhr persönlicher Experte für internationale Betrugsfälle",
+        ':hero_subtitle' => 'Als erfolgreicher Accounting-Berater für Betrugsplattformen begleite ich Sie bei der vollständigen Aufarbeitung Ihres Falls: präzise Finanzflussanalyse, professionelle Dokumentation und persönliche Betreuung bis zur Einreichung bei Behörden und Anwälten.',
+        ':footer_tagline' => 'Persönlicher Accounting-Berater für internationale Betrugsfälle – professionell, diskret und vertrauenswürdig.',
+    ]);
+}
+
+function get_site_customization(PDO $pdo): array
+{
+    $defaults = [
+        'logo_url' => '',
+        'phone' => SITE_PHONE,
+        'accountant_name' => 'Johannes Kiehl',
+        'whatsapp_number' => WHATSAPP_NUMBER,
+        'navbar_background_color' => '#0a1628',
+        'hero_title' => "Johannes Kiehl –\nIhr persönlicher Experte für internationale Betrugsfälle",
+        'hero_subtitle' => 'Als erfolgreicher Accounting-Berater für Betrugsplattformen begleite ich Sie bei der vollständigen Aufarbeitung Ihres Falls: präzise Finanzflussanalyse, professionelle Dokumentation und persönliche Betreuung bis zur Einreichung bei Behörden und Anwälten.',
+        'footer_tagline' => 'Persönlicher Accounting-Berater für internationale Betrugsfälle – professionell, diskret und vertrauenswürdig.',
+    ];
+
+    ensure_site_customization_tables($pdo);
+
+    $settingsStmt = $pdo->query("SELECT logo_url, phone, accountant_name, whatsapp_number, navbar_background_color FROM site_settings WHERE id = 1 LIMIT 1");
+    $settings = $settingsStmt->fetch() ?: [];
+
+    $contentStmt = $pdo->query("SELECT hero_title, hero_subtitle, footer_tagline FROM site_content WHERE id = 1 LIMIT 1");
+    $content = $contentStmt->fetch() ?: [];
+
+    return array_merge($defaults, array_filter(array_merge($settings, $content), static fn ($value) => $value !== null));
+}

@@ -212,7 +212,7 @@ function statusBadge(string $status): string
         <a href="#"           class="nav-link"><i class="fas fa-envelope"></i> Nachrichten</a>
 
         <div class="nav-section" style="margin-top:12px;">System</div>
-        <a href="#"           class="nav-link"><i class="fas fa-gear"></i> Einstellungen</a>
+        <a href="settings.php" class="nav-link"><i class="fas fa-gear"></i> Einstellungen</a>
         <a href="logout.php"  class="nav-link logout"><i class="fas fa-right-from-bracket"></i> Abmelden</a>
     </div>
 

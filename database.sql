@@ -120,4 +120,53 @@ CREATE TABLE IF NOT EXISTS `rate_limits` (
 CREATE INDEX `idx_rate_limits_ip_action` ON `rate_limits` (`ip_address`, `action`);
 CREATE INDEX `idx_rate_limits_window`    ON `rate_limits` (`window_start`);
 
+-- ============================================================
+-- Table: site_settings
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `site_settings` (
+    `id`                    TINYINT      NOT NULL DEFAULT 1,
+    `logo_url`              VARCHAR(500) DEFAULT NULL,
+    `phone`                 VARCHAR(50)  NOT NULL,
+    `accountant_name`       VARCHAR(255) NOT NULL,
+    `whatsapp_number`       VARCHAR(30)  NOT NULL,
+    `navbar_background_color` VARCHAR(20) NOT NULL DEFAULT '#0a1628',
+    `created_at`            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `chk_site_settings_single_row` CHECK (`id` = 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `site_settings` (`id`, `logo_url`, `phone`, `accountant_name`, `whatsapp_number`, `navbar_background_color`) VALUES
+(1, NULL, '+49 800 000 0000', 'Johannes Kiehl', '4989123456789', '#0a1628')
+ON DUPLICATE KEY UPDATE
+    `phone` = VALUES(`phone`),
+    `accountant_name` = VALUES(`accountant_name`),
+    `whatsapp_number` = VALUES(`whatsapp_number`),
+    `navbar_background_color` = VALUES(`navbar_background_color`);
+
+-- ============================================================
+-- Table: site_content
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `site_content` (
+    `id`             TINYINT     NOT NULL DEFAULT 1,
+    `hero_title`     TEXT        NOT NULL,
+    `hero_subtitle`  TEXT        NOT NULL,
+    `footer_tagline` TEXT        NOT NULL,
+    `created_at`     TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`     TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `chk_site_content_single_row` CHECK (`id` = 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `site_content` (`id`, `hero_title`, `hero_subtitle`, `footer_tagline`) VALUES
+(1,
+ 'Johannes Kiehl –\nIhr persönlicher Experte für internationale Betrugsfälle',
+ 'Als erfolgreicher Accounting-Berater für Betrugsplattformen begleite ich Sie bei der vollständigen Aufarbeitung Ihres Falls: präzise Finanzflussanalyse, professionelle Dokumentation und persönliche Betreuung bis zur Einreichung bei Behörden und Anwälten.',
+ 'Persönlicher Accounting-Berater für internationale Betrugsfälle – professionell, diskret und vertrauenswürdig.'
+)
+ON DUPLICATE KEY UPDATE
+    `hero_title` = VALUES(`hero_title`),
+    `hero_subtitle` = VALUES(`hero_subtitle`),
+    `footer_tagline` = VALUES(`footer_tagline`);
+
 SET foreign_key_checks = 1;
